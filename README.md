@@ -2,6 +2,12 @@
 
 A web app for the HR Manager of ACME to manage salaries of 10,000 employees across countries, and to answer questions like "how do we pay people?". It replaces the Excel sheets HR uses today.
 
+Live app: https://salary-management-app-three.vercel.app
+Demo video: 
+
+I'm on a free hosting plan, so the first load can take up to a minute while the server wakes up.
+
+
 ## What it does
 
 - Add, edit, delete and view employees
