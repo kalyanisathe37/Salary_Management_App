@@ -3,7 +3,18 @@
 A web app for the HR Manager of ACME to manage salaries of 10,000 employees across countries, and to answer questions like "how do we pay people?". It replaces the Excel sheets HR uses today.
 
 Live app: https://salary-management-app-three.vercel.app
-Demo video: 
+Demo video: Hi,
+
+Please find my submission for the Salary Management assessment:
+
+- GitHub repo: https://github.com/kalyanisathe37/Salary_Management_App
+- Live app: https://salary-management-app-three.vercel.app/
+- Demo video: https://docs.google.com/videos/d/1pX2u0FWOHpSJZo6_yMjaYrqPx_16r_U9nztRABzsq3I/edit?usp=drive_link
+
+Note: the backend runs on a free plan, so the first load may take up to a minute.
+
+Thanks,
+Avantika
 
 I'm on a free hosting plan, so the first load can take up to a minute while the server wakes up.
 
