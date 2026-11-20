@@ -1,29 +1,36 @@
 # Salary Management: Requirements
 
 ## Goal
-HR Manager of ACME (10,000 employees, multiple countries) ko Excel ki jagah
-ek web app dena, jisse wo salary data manage kare aur "hum kaise pay karte
-hain" ke sawaalon ke jawab le sake.
+Give ACME's HR Manager (10,000 employees across multiple countries) a web app
+to replace Excel, so they can manage salary data and answer questions about
+how the organization pays its people.
 
 ## Scope & Features
 1. Employee CRUD: name, email, job title, department, country, currency,
    salary, joining date
-2. Employee list: server-side pagination, search, filter (country, job title)
-3. Insights: min / max / avg / median salary by country and by job title,
-   headcount per country
+2. Employee list: server-side pagination, search, and filters (country, job title)
+3. Insights: min / max / average / median salary by country and by job title,
+   plus headcount
 4. Seed script: 10,000 realistic employees
-5. Validation: salary > 0, valid currency, unique email
+5. Validation: salary must be greater than 0, email must be unique
 
 ## Deliberately Left Out (and why)
-- Login/auth: assessment ka focus salary logic hai, single persona (HR).
-  Production mein pehle add hoga.
-- Payroll, tax, bonus, payslips: alag problem hai, scope badh jayega.
-- Currency conversion (live rates): insights currency ke andar group hote
-  hain, taaki galat comparison na ho. Conversion v2 mein.
-- Excel import/export: nice-to-have, 3-hour limit mein nahi.
-- Salary history/audit log: useful hai, par core question nahi.
+- **Login/auth:** The assessment focuses on salary logic and there is a single
+  persona (HR). It would be the first thing added for production.
+- **Payroll, tax, bonus, payslips:** A separate problem that would inflate scope.
+- **Currency conversion (live rates):** Insights are grouped within each
+  currency so that unlike amounts are never compared. Conversion is a v2 item.
+- **Excel import/export:** Nice to have, but outside the 3-hour limit.
+- **Salary history / audit log:** Useful, but not needed to answer the core
+  questions.
 
 ## Key Decisions
-- Aggregates DB mein (not in Python/JS) taaki 10k+ rows pe fast rahe
-- Indexes on country, job_title
-- Per-employee currency field (multi-country)
+- Aggregates (count, min, max, avg) are computed in the database, not in
+  Python/JS, so they stay fast at 10k+ rows.
+- Indexes on `country` and `job_title`.
+- Each employee has their own currency field (multi-country support).
+- Insights are grouped by currency, because averaging INR and USD together
+  would give a meaningless number.
+- Median is computed in Python because SQLite has no built-in median. On
+  Postgres we would use `percentile_cont`.
+- SQLite is used for simplicity; production would use Postgres.
