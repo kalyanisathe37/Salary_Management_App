@@ -21,6 +21,10 @@ I'm on a free hosting plan, so the first load can take up to a minute while the 
 
 Django + Django REST Framework, SQLite, React (Vite) and Ant Design.
 
+## Architecture
+
+![Architecture](docs/architecture.png)
+
 ## Running it locally
 
 Backend:
