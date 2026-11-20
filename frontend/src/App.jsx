@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { Layout, Tabs, Table, Input, Select, Button, Space, Popconfirm, message } from "antd";
-import { getEmployees, deleteEmployee, getInsightsByCountry, getInsightsByJobTitle } from "./api";
+import {
+  getEmployees,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+  getInsightsByCountry,
+  getInsightsByJobTitle,
+} from "./api";
+import EmployeeForm from "./EmployeeForm";
 
 const { Header, Content } = Layout;
 
@@ -13,6 +21,8 @@ function EmployeesTab() {
   const [search, setSearch] = useState("");
   const [country, setCountry] = useState();
   const [loading, setLoading] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
 
   const load = async () => {
     setLoading(true);
@@ -34,6 +44,23 @@ function EmployeesTab() {
     load();
   };
 
+  const onSave = async (values) => {
+    try {
+      if (editing) {
+        await updateEmployee(editing.id, values);
+        message.success("Updated");
+      } else {
+        await createEmployee(values);
+        message.success("Added");
+      }
+      setFormOpen(false);
+      load();
+    } catch (e) {
+      const err = e.response?.data;
+      message.error(err ? JSON.stringify(err) : "Save failed");
+    }
+  };
+
   const columns = [
     { title: "Name", dataIndex: "full_name" },
     { title: "Email", dataIndex: "email" },
@@ -43,9 +70,14 @@ function EmployeesTab() {
     {
       title: "Action",
       render: (_, r) => (
-        <Popconfirm title="Delete this employee?" onConfirm={() => onDelete(r.id)}>
-          <Button danger size="small">Delete</Button>
-        </Popconfirm>
+        <Space>
+          <Button size="small" onClick={() => { setEditing(r); setFormOpen(true); }}>
+            Edit
+          </Button>
+          <Popconfirm title="Delete this employee?" onConfirm={() => onDelete(r.id)}>
+            <Button danger size="small">Delete</Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ];
@@ -66,6 +98,9 @@ function EmployeesTab() {
           options={COUNTRIES.map((c) => ({ value: c, label: c }))}
           onChange={(v) => { setPage(1); setCountry(v); }}
         />
+        <Button type="primary" onClick={() => { setEditing(null); setFormOpen(true); }}>
+          Add Employee
+        </Button>
       </Space>
       <Table
         rowKey="id"
@@ -73,6 +108,12 @@ function EmployeesTab() {
         dataSource={data}
         loading={loading}
         pagination={{ current: page, total, pageSize: 50, showSizeChanger: false, onChange: setPage }}
+      />
+      <EmployeeForm
+        open={formOpen}
+        employee={editing}
+        onSubmit={onSave}
+        onCancel={() => setFormOpen(false)}
       />
     </>
   );
@@ -100,9 +141,19 @@ function InsightsTab() {
   return (
     <>
       <h3>By Country</h3>
-      <Table rowKey={(r) => r.country + r.currency} columns={cols("country", "Country")} dataSource={byCountry} pagination={false} />
+      <Table
+        rowKey={(r) => r.country + r.currency}
+        columns={cols("country", "Country")}
+        dataSource={byCountry}
+        pagination={false}
+      />
       <h3 style={{ marginTop: 24 }}>By Job Title</h3>
-      <Table rowKey={(r) => r.job_title + r.currency} columns={cols("job_title", "Job Title")} dataSource={byTitle} pagination={false} />
+      <Table
+        rowKey={(r) => r.job_title + r.currency}
+        columns={cols("job_title", "Job Title")}
+        dataSource={byTitle}
+        pagination={false}
+      />
     </>
   );
 }
